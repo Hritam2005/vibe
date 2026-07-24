@@ -236,7 +236,7 @@ const AdvancedAiWorkflow = () => {
           interval = setInterval(() => {
             setAudioExtractionProgress((prev) => {
               if (prev >= 99) return 99;
-              return prev + Math.random() * 2;
+              return Math.min(prev + Math.random() * 2, 99);
             });
     
             if (audioExtractionStartTime) {

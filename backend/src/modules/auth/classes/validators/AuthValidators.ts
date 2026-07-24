@@ -46,9 +46,8 @@ class SignUpBody {
     example: 'John',
     type: 'string',
   })
-  @Matches(/^[A-Za-z ]+$/, {
-    message: 'name can only contain alphabetic characters and spaces',
-  })
+  @IsString()
+  @IsNotEmpty({ message: 'First name is required' })
   firstName: string;
 
   @JSONSchema({
@@ -57,9 +56,7 @@ class SignUpBody {
     example: 'Smith',
     type: 'string',
   })
-  @Matches(/^[A-Za-z ]+$/, {
-    message: 'name can only contain alphabetic characters and spaces',
-  })
+  @IsString()
   @IsOptional()
   lastName?: string;
 
@@ -116,9 +113,8 @@ class GoogleSignUpBody {
     example: 'John',
     type: 'string',
   })
-  @Matches(/^[A-Za-z ]+$/, {
-    message: 'name can only contain alphabetic characters and spaces',
-  })
+  @IsString()
+  @IsNotEmpty({ message: 'First name is required' })
   firstName: string;
 
   @JSONSchema({
@@ -127,9 +123,7 @@ class GoogleSignUpBody {
     example: 'Smith',
     type: 'string',
   })
-  @Matches(/^[A-Za-z ]+$/, {
-    message: 'name can only contain alphabetic characters and spaces',
-  })
+  @IsString()
   @IsOptional()
   lastName?: string;
 
@@ -182,9 +176,6 @@ class ChangePasswordBody {
   @IsString()
   @IsNotEmpty()
   @MinLength(8)
-  @Matches(/^[A-Za-z ]+$/, {
-    message: 'Password Invalid',
-  })
   @JSONSchema({
     title: 'New Password',
     description:
@@ -203,9 +194,6 @@ class ChangePasswordBody {
   @IsString()
   @IsNotEmpty()
   @MinLength(8)
-  @Matches(/^[A-Za-z ]+$/, {
-    message: 'Password Invalid',
-  })
   @JSONSchema({
     title: 'Confirm New Password',
     description:

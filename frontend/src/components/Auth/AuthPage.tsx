@@ -566,7 +566,16 @@ export default function AuthPage({ role }: AuthPageProps) {
           }),
         });
         if (!response.ok) {
-          throw new Error(`Signup failed with status ${response.status}`);
+          let errorMsg = `Signup failed with status ${response.status}`;
+          try {
+            const errorData = await response.json();
+            if (errorData.errors && errorData.errors.length > 0) {
+              errorMsg = Object.values(errorData.errors[0].constraints || {}).join(', ');
+            } else if (errorData.message) {
+              errorMsg = errorData.message;
+            }
+          } catch (e) {}
+          throw new Error(errorMsg);
         }
       }
 
@@ -590,8 +599,8 @@ export default function AuthPage({ role }: AuthPageProps) {
       }
     } catch (error) {
       console.error("Google Login Failed", error);
-      setFormErrors({
-        ...formErrors,
+      setFormErrors(prev => ({
+        ...prev,
         auth: (() => {
           const code = (error as any)?.code;
           if (code === "auth/popup-closed-by-user" || code === "auth/cancelled-popup-request") return "Sign-in was cancelled. Please try again.";
@@ -599,7 +608,7 @@ export default function AuthPage({ role }: AuthPageProps) {
           if (code === "auth/user-disabled") return "Your account has been disabled. Please contact support.";
           return "Failed to sign in with Google. Please try again.";
         })()
-      });
+      }));
     } finally {
       setLoading(false);
     }
@@ -628,7 +637,16 @@ export default function AuthPage({ role }: AuthPageProps) {
       }),
     });
     if (!response.ok) {
-      throw new Error(`Signup failed with status ${response.status}`);
+      let errorMsg = `Signup failed with status ${response.status}`;
+      try {
+        const errorData = await response.json();
+        if (errorData.errors && errorData.errors.length > 0) {
+          errorMsg = Object.values(errorData.errors[0].constraints || {}).join(', ');
+        } else if (errorData.message) {
+          errorMsg = errorData.message;
+        }
+      } catch (e) {}
+      throw new Error(errorMsg);
     }
 
     const fbUser = auth.currentUser;
@@ -812,8 +830,8 @@ export default function AuthPage({ role }: AuthPageProps) {
         setRecaptchaToken(null);
       }
 
-      setFormErrors({
-        ...formErrors,
+      setFormErrors(prev => ({
+        ...prev,
         auth: (() => {
           const code = (error as any)?.code;
           if (code === "auth/invalid-credential" || code === "auth/wrong-password" || code === "auth/user-not-found") return "Incorrect email or password. Please try again.";
@@ -822,7 +840,7 @@ export default function AuthPage({ role }: AuthPageProps) {
           if (code === "auth/network-request-failed") return "Network error. Please check your connection and try again.";
           return "Login failed. Please try again.";
         })()
-      });
+      }));
     } finally {
       setLoading(false);
     }
@@ -861,7 +879,7 @@ export default function AuthPage({ role }: AuthPageProps) {
     }
 
     if (!recaptchaToken && isRecaptchaEnabled) {
-      setFormErrors({ ...formErrors, recaptcha: "Please complete the reCAPTCHA" });
+      setFormErrors(prev => ({ ...prev, recaptcha: "Please complete the reCAPTCHA" }));
       return;
     }
 
@@ -887,7 +905,7 @@ export default function AuthPage({ role }: AuthPageProps) {
       const firstName = nameParts[0] || '';
       const lastName = nameParts.length > 1 ? nameParts.slice(1).join(' ') : ' ';
 
-      await signupMutation({
+      const response: any = await signupMutation({
         body: {
           email: email,
           password: password,
@@ -898,6 +916,9 @@ export default function AuthPage({ role }: AuthPageProps) {
           faceEmbedding,
         }
       });
+      if (response && response.error) {
+        throw response.error;
+      }
       const result = await loginWithEmail(email, password);
 
       // Set user in store
@@ -921,25 +942,24 @@ export default function AuthPage({ role }: AuthPageProps) {
 
     } catch (error: any) {
       console.error("Email Signup Failed", error);
-      console.log(signupError, isSignUpError);
-      if (isSignUpError) {
+      if (error) {
         let message = "";
-        if (signupError?.message === "Invalid body, check 'errors' property for more info.") {
-          for (const error of signupError?.errors || []) {
-            message += `${Object.values(error.constraints).join(', ')}`;
+        if (error?.message === "Invalid body, check 'errors' property for more info.") {
+          for (const err of error?.errors || []) {
+            message += `${Object.values(err.constraints).join(', ')}`;
           }
         }
-        else message = signupError?.message || "An error occurred during signup";
+        else message = error?.message || "An error occurred during signup";
 
-        setFormErrors({
-          ...formErrors,
+        setFormErrors(prev => ({
+          ...prev,
           auth: message || "Failed to create account. Please try again.",
-          email: Object.values(signupError?.errors?.find((e: any) => e.property === 'email')?.constraints || {}).join(', ') || "",
+          email: Object.values(error?.errors?.find((e: any) => e.property === 'email')?.constraints || {}).join(', ') || "",
           fullName:
-            (Object.values(signupError?.errors?.find((e: any) => e.property === 'firstName')?.constraints || {}).join(', ') +
-              (Object.values(signupError?.errors?.find((e: any) => e.property === 'lastName')?.constraints || {}).join(', '))).trim() || "",
-          password: Object.values(signupError?.errors?.find((e: any) => e.property === 'password')?.constraints || {}).join(', ') || ""
-        });
+            (Object.values(error?.errors?.find((e: any) => e.property === 'firstName')?.constraints || {}).join(', ') + " " +
+              (Object.values(error?.errors?.find((e: any) => e.property === 'lastName')?.constraints || {}).join(', '))).trim() || "",
+          password: Object.values(error?.errors?.find((e: any) => e.property === 'password')?.constraints || {}).join(', ') || ""
+        }));
       }
     } finally {
       setLoading(false);

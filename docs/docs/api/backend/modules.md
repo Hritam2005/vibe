@@ -1,3 +1,5 @@
+# vitest-vibe
+
 ## Modules
 
 - [auth](Other/auth.md)

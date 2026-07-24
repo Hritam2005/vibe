@@ -13,8 +13,8 @@
 // import { AuroraText } from "@/components/magicui/aurora-text";
 // import { cn } from "@/utils/utils";
 // import { useSignup, useLoginWithGoogle } from "@/hooks/hooks.ts";
-// import collabration from "../../../public/img/collabration.svg";
-// import vledLogo from "../../../public/img/vled-logo-login.png";
+// import collabration from "/img/collabration.svg";
+// import vledLogo from "/img/vled-logo-login.png";
 // import ReCAPTCHA from "react-google-recaptcha";
 // import { LeftHeroSection } from "@/components/Auth/LeftHeroSection";
 

@@ -29,8 +29,6 @@ const config: Config = {
       "docusaurus-plugin-typedoc",
       {
         categorizeByGroup: true,
-        hideBreadcrumbs: true,
-        hidePageTitle: true,
         entryPoints: [
           "../backend/src/modules/courses/index.ts",
           "../backend/src/modules/auth/index.ts",

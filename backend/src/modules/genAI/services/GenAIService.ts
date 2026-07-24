@@ -200,6 +200,7 @@ export class GenAIService extends BaseService {
   async approveTaskToStart(
     jobId: string,
     userId: string,
+    targetTask: TaskType,
     usePrevious?: number,
     parameters?: Partial<
       | TranscriptParameters
@@ -226,7 +227,7 @@ export class GenAIService extends BaseService {
           `The task ${jobState.currentTask} for job ID ${jobId} is already completed, you can either rerun the task or approve to move to the next taask.`,
         );
       }
-      if (jobState.currentTask === TaskType.UPLOAD_CONTENT) {
+      if (targetTask === TaskType.UPLOAD_CONTENT) {
         // Persist upload parameters to DB before content upload
         let resolvedUploadParameters = {
           ...job.uploadParameters,
@@ -256,13 +257,32 @@ export class GenAIService extends BaseService {
         const result = await this.uploadContent(jobId, jobState);
         return result;
       }
-      return this.webhookService.approveTaskStart(jobId, jobState);
+
+      // Update task status to PENDING so that frontend polling doesn't immediately fail on stale states
+      switch (targetTask) {
+        case TaskType.AUDIO_EXTRACTION:
+          job.jobStatus.audioExtraction = TaskStatus.PENDING;
+          break;
+        case TaskType.TRANSCRIPT_GENERATION:
+          job.jobStatus.transcriptGeneration = TaskStatus.PENDING;
+          break;
+        case TaskType.SEGMENTATION:
+          job.jobStatus.segmentation = TaskStatus.PENDING;
+          break;
+        case TaskType.QUESTION_GENERATION:
+          job.jobStatus.questionGeneration = TaskStatus.PENDING;
+          break;
+      }
+      await this.genAIRepository.update(jobId, job, session);
+
+      return this.webhookService.approveTaskStart(jobId, jobState, targetTask);
     });
   }
 
   async rerunTask(
     jobId: string,
     userId: string,
+    targetTask: TaskType,
     usePrevious?: number,
     parameters?: Partial<
       | TranscriptParameters
@@ -293,7 +313,7 @@ export class GenAIService extends BaseService {
         ...jobState.parameters,
         ...this.removeUndefined(parameters),
       };
-      if (jobState.currentTask === TaskType.UPLOAD_CONTENT) {
+      if (targetTask === TaskType.UPLOAD_CONTENT) {
         // Persist upload parameters to DB before content upload
         let resolvedUploadParameters = {
           ...job.uploadParameters,
@@ -322,7 +342,25 @@ export class GenAIService extends BaseService {
         const result = await this.uploadContent(jobId, jobState);
         return result;
       }
-      return this.webhookService.rerunTask(jobId, jobState);
+
+      // Update task status to PENDING so that frontend polling doesn't immediately fail on stale states
+      switch (targetTask) {
+        case TaskType.AUDIO_EXTRACTION:
+          job.jobStatus.audioExtraction = TaskStatus.PENDING;
+          break;
+        case TaskType.TRANSCRIPT_GENERATION:
+          job.jobStatus.transcriptGeneration = TaskStatus.PENDING;
+          break;
+        case TaskType.SEGMENTATION:
+          job.jobStatus.segmentation = TaskStatus.PENDING;
+          break;
+        case TaskType.QUESTION_GENERATION:
+          job.jobStatus.questionGeneration = TaskStatus.PENDING;
+          break;
+      }
+      await this.genAIRepository.update(jobId, job, session);
+
+      return this.webhookService.rerunTask(jobId, jobState, targetTask);
     });
   }
 

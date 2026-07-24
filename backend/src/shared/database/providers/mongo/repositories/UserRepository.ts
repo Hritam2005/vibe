@@ -12,13 +12,17 @@ import {appConfig} from '#root/config/app.js';
 
 if (!admin.apps.length) {
   if (appConfig.isDevelopment) {
-    admin.initializeApp({
-      credential: admin.credential.cert({
-        clientEmail: appConfig.firebase.clientEmail,
-        privateKey: appConfig.firebase.privateKey.replace(/\\n/g, '\n'),
-        projectId: appConfig.firebase.projectId,
-      }),
-    });
+    if (appConfig.firebase.privateKey) {
+      admin.initializeApp({
+        credential: admin.credential.cert({
+          clientEmail: appConfig.firebase.clientEmail,
+          privateKey: appConfig.firebase.privateKey.replace(/\\n/g, '\n'),
+          projectId: appConfig.firebase.projectId,
+        }),
+      });
+    } else {
+      admin.initializeApp({ projectId: appConfig.firebase.projectId || 'demo-project' });
+    }
   } else {
     admin.initializeApp({
       credential: admin.credential.applicationDefault(),

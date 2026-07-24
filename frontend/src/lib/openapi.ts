@@ -20,9 +20,19 @@ export const fetchClient = createFetchClient<paths>({
   fetch: (url, options) => {
     // openapi-fetch passes a Request object for some requests (like DELETE without body)
     // If we just pass `url` down, it drops the headers added by middleware.
-    // Instead, clone it applying options.
+    // Instead, clone it applying options, being careful to preserve existing headers.
     if (url instanceof Request) {
-      const newReq = new Request(url, { ...options, credentials: "include" });
+      const mergedHeaders = new Headers(url.headers);
+      if (options?.headers) {
+        new Headers(options.headers).forEach((value, key) => {
+          mergedHeaders.set(key, value);
+        });
+      }
+      const newReq = new Request(url, { 
+        ...options, 
+        headers: mergedHeaders,
+        credentials: "include" 
+      });
       return fetch(newReq);
     }
     return fetch(url, {

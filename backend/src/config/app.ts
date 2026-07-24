@@ -37,7 +37,7 @@ export const appConfig = {
     clientEmail: env('FIREBASE_CLIENT_EMAIL') || undefined,
     privateKey: env('FIREBASE_PRIVATE_KEY')?.replace(/\\n/g, '\n') || undefined,
     projectId: env('FIREBASE_PROJECT_ID') || undefined,
-    apiKey: env('FIREBASE_API_KEY') || undefined,
+    apiKey: env('FIREBASE_API_KEY') || 'dummy-api-key',
     storageBucket: env('FIREBASE_STORAGE_BUCKET') || 'vibe-aiserver-data',
   },
   sentry: {
@@ -50,4 +50,5 @@ export const appConfig = {
     apiKey: env('INTEGRATION_API_KEY') || undefined,
   },
 };
-console.log(appConfig.url)
+console.log(appConfig.url);
+// Restarting nodemon to pick up .env changes

@@ -73,6 +73,13 @@ class SegmentationParameters {
   noiseId?: number;
 }
 
+@JSONSchema({ title: 'AudioExtractionParameters' })
+class AudioExtractionParameters {
+  @IsOptional()
+  @IsBoolean()
+  dummy?: boolean;
+}
+
 @JSONSchema({ title: 'SmartBloomDistribution' })
 class SmartBloomDistribution {
   @JSONSchema({
@@ -675,6 +682,9 @@ class ApproveStartBody {
       {
         $ref: '#/components/schemas/UploadParameters',
       },
+      {
+        $ref: '#/components/schemas/AudioExtractionParameters',
+      },
     ],
   })
   @IsOptional()
@@ -684,6 +694,8 @@ class ApproveStartBody {
     const object = opts?.object;
     if (!object) return Object;
     switch (object.type) {
+      case TaskType.AUDIO_EXTRACTION:
+        return AudioExtractionParameters;
       case TaskType.TRANSCRIPT_GENERATION:
         return TranscriptParameters;
       case TaskType.SEGMENTATION:
@@ -696,7 +708,7 @@ class ApproveStartBody {
         return Object;
     }
   })
-  parameters?: Partial<TranscriptParameters | SegmentationParameters | QuestionGenerationParameters | PartialUploadParameters>;
+  parameters?: Partial<TranscriptParameters | SegmentationParameters | QuestionGenerationParameters | PartialUploadParameters | AudioExtractionParameters>;
 
   @JSONSchema({
     title: 'Use Previous',
@@ -736,6 +748,9 @@ class RerunTaskBody {
       {
         $ref: '#/components/schemas/UploadParameters',
       },
+      {
+        $ref: '#/components/schemas/AudioExtractionParameters',
+      },
     ],
   })
   @IsOptional()
@@ -745,6 +760,8 @@ class RerunTaskBody {
     const object = opts?.object;
     if (!object) return Object;
     switch (object.type) {
+      case TaskType.AUDIO_EXTRACTION:
+        return AudioExtractionParameters;
       case TaskType.TRANSCRIPT_GENERATION:
         return TranscriptParameters;
       case TaskType.SEGMENTATION:
@@ -757,7 +774,7 @@ class RerunTaskBody {
         return Object;
     }
   })
-  parameters?: Partial<TranscriptParameters | SegmentationParameters | QuestionGenerationParameters | PartialUploadParameters>;
+  parameters?: Partial<TranscriptParameters | SegmentationParameters | QuestionGenerationParameters | PartialUploadParameters | AudioExtractionParameters>;
 
   @JSONSchema({
     title: 'Use Previous',

@@ -83,7 +83,7 @@ export class InviteController {
   async inviteUsers(
     @Body() body: InviteBody,
     @Params() params: CourseAndVersionId,
-    @Ability(getInviteAbility) {ability, user},
+    @Ability(getInviteAbility) {ability, user}: any,
     @Req() req: Request,
   ) {
     const {courseId, versionId} = params;
@@ -165,7 +165,7 @@ export class InviteController {
   async generateInviteLink(
     @Params() params: CourseAndVersionId,
     @Body() body: {role: EnrollmentRole; cohortId: string},
-    @Ability(getInviteAbility) {ability, user},
+    @Ability(getInviteAbility) {ability, user}: any,
     @Req() req: Request,
   ) {
     const {courseId, versionId} = params;
@@ -269,7 +269,7 @@ export class InviteController {
   async getInvitesForCourseVersion(
     @Params() params: CourseAndVersionId,
     @QueryParams() query: InviteQueryParams,
-    @Ability(getInviteAbility) {ability},
+    @Ability(getInviteAbility) {ability}: any,
   ): Promise<InviteResponse> {
     const {courseId, versionId} = params;
     const {inviteStatus, currentPage, limit, search, sort, startDate, endDate} =
@@ -316,7 +316,7 @@ export class InviteController {
     statusCode: 400,
   })
   async getInvitesForUser(
-    @Ability(getInviteAbility) {ability},
+    @Ability(getInviteAbility) {ability}: any,
     @CurrentUser() user: {_id: string},
   ): Promise<InviteResponse> {
     const invites = await this.inviteService.findPendingInvitesByUserId(
@@ -342,7 +342,7 @@ export class InviteController {
   })
   async resendInvite(
     @Params() params: InviteIdParams,
-    @Ability(getInviteAbility) {ability, user},
+    @Ability(getInviteAbility) {ability, user}: any,
     @Req() req: Request,
   ): Promise<MessageResponse> {
     const {inviteId} = params;
@@ -399,7 +399,7 @@ export class InviteController {
   })
   async cancelInvite(
     @Params() params: InviteIdParams,
-    @Ability(getInviteAbility) {ability, user},
+    @Ability(getInviteAbility) {ability, user}: any,
     @Req() req: Request,
   ): Promise<MessageResponse> {
     const {inviteId} = params;

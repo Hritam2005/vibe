@@ -337,3 +337,8 @@
   .animate-vibe-bar2,
   .animate-vibe-bar3 { animation: none; }
 }
+
+/* Hide firebase auth emulator warning */
+.firebase-emulator-warning {
+  display: none !important;
+}

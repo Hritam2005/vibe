@@ -1,3 +1,5 @@
+# courses
+
 ## Variables
 
 - [coursesContainerModules](courses.coursesContainerModules.md)

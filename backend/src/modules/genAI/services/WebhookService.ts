@@ -18,8 +18,7 @@ export class WebhookService {
     this.httpClient = axios.create({
       // httpAgent: agent,
       // httpsAgent: agent,
-      // baseURL: this.aiServerUrl,
-      baseURL: "http://34.131.48.163:8017",
+      baseURL: this.aiServerUrl,
       timeout: 30000,
       headers: {
         'Content-Type': 'application/json',
@@ -43,8 +42,9 @@ export class WebhookService {
    * @param taskParams Parameters for the task
    * @returns Updated job data from AI server
    */
-  async approveTaskStart(jobId: string, jobState: JobState): Promise<any> {
-    const response = await this.httpClient.post(`/jobs/${jobId}/tasks/approve/start`, jobState);
+  async approveTaskStart(jobId: string, jobState: JobState, targetTask?: string): Promise<any> {
+    const payload = targetTask ? { ...jobState, targetTask } : jobState;
+    const response = await this.httpClient.post(`/jobs/${jobId}/tasks/approve/start`, payload);
     console.log('approveTaskStart response:', response.data);
     return response.data;
   }
@@ -65,8 +65,9 @@ export class WebhookService {
    * @param jobId The job ID
    * @returns Updated job data from AI server
    */
-  async rerunTask(jobId: string, jobState: JobState): Promise<any> {
-    const response = await this.httpClient.post(`/jobs/${jobId}/tasks/rerun`, jobState);
+  async rerunTask(jobId: string, jobState: JobState, targetTask?: string): Promise<any> {
+    const payload = targetTask ? { ...jobState, targetTask } : jobState;
+    const response = await this.httpClient.post(`/jobs/${jobId}/tasks/rerun`, payload);
     return response.data;
   }
 

@@ -1936,6 +1936,9 @@ export class EnrollmentService extends BaseService {
       : await this.courseRepo.getAllCourses();
 
     if (!courses.length || courses.some(c => !c)) {
+      if (!courseId) {
+        return { totalCount: 0, updatedCount: 0 };
+      }
       throw new Error('Course not found');
     }
 
