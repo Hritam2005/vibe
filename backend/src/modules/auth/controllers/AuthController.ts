@@ -209,7 +209,7 @@ export class AuthController {
     const result = await data.json();
 
     if (!data.ok) {
-      throw new HttpError(401, result.error?.message || 'Login failed');
+      throw new HttpError(401, (result as any).error?.message || 'Login failed');
     }
 
     // ✅ fetch your app user from DB

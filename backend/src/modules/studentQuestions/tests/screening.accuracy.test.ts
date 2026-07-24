@@ -11,7 +11,7 @@ import {describe, it, expect} from 'vitest';
 import {ScreeningService} from '../services/screening/ScreeningService.js';
 import {SCREENING_CASES, Decision} from './screening.dataset.js';
 
-const hasKey = !!process.env.GROQ_API_KEY || !!process.env.ANTHROPIC_CRED;
+const hasKey = !!process.env.GROQ_API_KEY || !!process.env.MINIMAX_API_KEY;
 const sleep = (ms: number) => new Promise(r => setTimeout(r, ms));
 
 describe.skipIf(!hasKey)('Screening accuracy (live LLM)', () => {

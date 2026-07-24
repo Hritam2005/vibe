@@ -15,7 +15,7 @@ import {QuestionProcessor} from '../question-processing/QuestionProcessor.js';
 import {QuizRepository} from '../repositories/providers/mongodb/QuizRepository.js';
 import {ClientSession, ObjectId} from 'mongodb';
 import {aiConfig} from '#root/config/ai.js';
-import {Anthropic} from '@anthropic-ai/sdk';
+import OpenAI from 'openai';
 import {TranscriptResponse} from '#root/shared/index.js';
 import JSON5 from 'json5';
 
@@ -410,40 +410,32 @@ class QuestionService extends BaseService {
     Return ONLY the JSON object. No additional text, comments, formatting, or explanation.
         `;
 
-        const ANTHROPIC_CRED = aiConfig.ANTHROPIC_CRED;
-        const ANTHROPIC_MODEL = aiConfig.ANTHROPIC_MODEL;
+        const MINIMAX_API_KEY = aiConfig.MINIMAX_API_KEY;
+        const MINIMAX_MODEL = aiConfig.MINIMAX_MODEL;
+        const MINIMAX_BASE_URL = aiConfig.MINIMAX_BASE_URL;
 
-        if (!ANTHROPIC_CRED) {
+        if (!MINIMAX_API_KEY) {
           throw new BadRequestError('Failed to find api key, try again!');
         }
 
-        const anthropic = new Anthropic({
-          apiKey: ANTHROPIC_CRED!,
+        const openai = new OpenAI({
+          apiKey: MINIMAX_API_KEY,
+          baseURL: MINIMAX_BASE_URL,
         });
 
-        
-
-        const response = await anthropic.messages.create({
-          model: ANTHROPIC_MODEL,
+        const response = await openai.chat.completions.create({
+          model: MINIMAX_MODEL!,
           max_tokens: 8000,
           temperature: 0.0,
           messages: [
             {
               role: 'user',
-              content: [
-                {
-                  type: 'text',
-                  text: `${prompt}\n\nTRANSCRIPT:\n${text}`,
-                },
-              ],
+              content: `${prompt}\n\nTRANSCRIPT:\n${text}`,
             },
           ],
         });
 
-
-        const finalOutput =
-          response.content?.map(c => ('text' in c ? c.text : '')).join('') ??
-          '';
+        const finalOutput = response.choices[0]?.message?.content ?? '';
 
         // Remove trailing commas in objects/arrays (common AI mistake)
         let cleanedOutput = finalOutput.replace(/,\s*([}\]])/g, '$1');

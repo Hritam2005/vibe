@@ -193,7 +193,7 @@ export class GenAIController {
       //throw new ForbiddenError('You do not have permission to approve tasks in this genAI');
     }
 
-    await this.genAIService.approveTaskToStart(id, userId, body.type, body.usePrevious, body.parameters);
+    await this.genAIService.approveTaskToStart(id, userId, body.type, body.usePrevious, body.parameters as any);
   }
 
   @OpenAPI({
@@ -242,7 +242,7 @@ export class GenAIController {
       //throw new ForbiddenError('You do not have permission to rerun tasks in this job');
     }
 
-    await this.genAIService.rerunTask(id, userId, body.type, body.usePrevious, body.parameters);
+    await this.genAIService.rerunTask(id, userId, body.type, body.usePrevious, body.parameters as any);
   }
 
   @OpenAPI({

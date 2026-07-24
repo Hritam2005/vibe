@@ -1,6 +1,6 @@
 # Crowd-Question Screening Pipeline — Feature Design
 
-> **Status:** Active (demo on Groq free tier; production-ready to switch to Anthropic).
+> **Status:** Active (demo on Groq free tier; production-ready to switch to MiniMax).
 > **Module:** `backend/src/modules/studentQuestions`
 > **Last updated:** 2026-07-02
 >
@@ -148,11 +148,11 @@ coercion) — **0 currently slip through**, control question still passes.
 
 | Key | Env | Default | Purpose |
 |-----|-----|---------|---------|
-| `provider` | `SCREENING_PROVIDER` | `groq` | `groq` (demo/free) or `anthropic` (prod) |
+| `provider` | `SCREENING_PROVIDER` | `groq` | `groq` (demo/free) or `minimax` (prod) |
 | `enabled` | `SCREENING_ENABLED` | `true` | Master switch; off = fail-open (dev only) |
 | `groq.model` | `GROQ_MODEL` | `llama-3.3-70b-versatile` | Groq model |
 | `groq.url` | `GROQ_URL` | OpenAI-compatible Groq endpoint | |
-| `anthropic.model` | `ANTHROPIC_MODEL` | `claude-haiku-4-5` | Prod model |
+| `minimax.model` | `MINIMAX_MODEL` | `MiniMax-Text-01` | Prod model |
 | `timeoutMs` | `SCREENING_TIMEOUT_MS` | `9000` | Per-call deadline |
 | `maxRetries` | `SCREENING_MAX_RETRIES` | `2` | Transient-error retries |
 | `dedupPoolLimit` | `SCREENING_DEDUP_LIMIT` | `50` | Max pool size for duplicate check |
@@ -160,7 +160,7 @@ coercion) — **0 currently slip through**, control question still passes.
 | `contextCharBudget` | `SCREENING_CONTEXT_CHARS` | `2000` | Lesson-context chars for on-topic + answer checks |
 
 **Provider-agnostic:** `createScreeningLlm()` picks `GroqScreeningLlm` or
-`AnthropicScreeningLlm` by config; the four checks are identical across providers.
+`MinimaxScreeningLlm` by config; the four checks are identical across providers.
 
 > **🛑 On-topic (context) check is ON HOLD** (`SCREENING_CONTEXT_ENABLED=false`,
 > the default). While on hold, `createQuestion` passes `context: null`, so the
@@ -209,7 +209,7 @@ strings.
 | `services/screening/ScreeningService.ts` | Orchestrates the 4 ordered checks, decisions |
 | `services/screening/ScreeningLlm.ts` | Provider interface + defensive JSON parse |
 | `services/screening/GroqScreeningLlm.ts` | Groq client (timeout, retries, forced JSON) |
-| `services/screening/AnthropicScreeningLlm.ts` | Anthropic client |
+| `services/screening/MinimaxScreeningLlm.ts` | MiniMax (OpenAI SDK) client |
 | `services/screening/screeningLlmFactory.ts` | Provider selection |
 | `services/screening/prompts.ts` | The four prompts |
 | `services/screening/verdicts.ts` | Schema validators |

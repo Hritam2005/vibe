@@ -4,7 +4,7 @@
  * A single method: send a prompt, get back parsed JSON. Implementations force
  * JSON output, enforce a hard timeout, and retry transient/rate-limit errors.
  * The screening service never touches a provider SDK directly, so swapping
- * Groq (demo) → Anthropic (prod) is a one-line factory change.
+ * Groq (demo) → MiniMax (prod) is a one-line factory change.
  */
 export interface ScreeningLlm {
   /** The concrete model id in use (for logging / verdict provenance). */

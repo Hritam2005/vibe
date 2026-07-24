@@ -4,11 +4,11 @@ import {env} from '#root/utils/env.js';
  * Config for the crowd-question screening filter (studentQuestions module).
  *
  * Provider-agnostic: the demo runs on Groq's free tier; production can switch to
- * Anthropic by flipping SCREENING_PROVIDER, with no code change to the checks.
+ * MiniMax by flipping SCREENING_PROVIDER, with no code change to the checks.
  */
 export const screeningConfig = {
-  /** 'groq' (demo/free) | 'anthropic' (prod). */
-  provider: (env('SCREENING_PROVIDER') || 'groq') as 'groq' | 'anthropic',
+  /** 'groq' (demo/free) | 'minimax' (prod). */
+  provider: (env('SCREENING_PROVIDER') || 'minimax') as 'groq' | 'minimax',
 
   /** Master switch — when off, submissions skip screening (fail-open, dev only). */
   enabled: (env('SCREENING_ENABLED') || 'true') !== 'false',
@@ -30,9 +30,10 @@ export const screeningConfig = {
     url: env('GROQ_URL') || 'https://api.groq.com/openai/v1/chat/completions',
   },
 
-  anthropic: {
-    apiKey: env('ANTHROPIC_CRED'),
-    model: env('ANTHROPIC_MODEL') || 'claude-haiku-4-5',
+  minimax: {
+    apiKey: env('MINIMAX_API_KEY'),
+    model: env('MINIMAX_MODEL') || 'MiniMax-Text-01',
+    baseURL: env('MINIMAX_BASE_URL') || 'https://api.minimax.chat/v1',
   },
 
   /** Per-call hard deadline (ms) — a slow provider must never hang a submission. */

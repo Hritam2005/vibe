@@ -87,7 +87,6 @@
     "vitest": "^3.2.3"
   },
   "dependencies": {
-    "@anthropic-ai/sdk": "^0.71.2",
     "@casl/ability": "^6.7.3",
     "@google-cloud/storage": "^7.17.1",
     "@inversifyjs/container": "^1.15.0",
@@ -127,6 +126,7 @@
     "multer": "^2.0.2",
     "node-cron": "^4.2.1",
     "nodemailer": "^7.0.3",
+    "openai": "^4.53.0",
     "reflect-metadata": "^0.2.2",
     "routing-controllers": "^0.11.2",
     "routing-controllers-openapi": "file:../vendor/routing-controllers-openapi",
